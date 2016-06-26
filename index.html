@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <title>SUPERFIGHT ONLINE</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script>
+	var rawCardData = ""
+	var charCards = [""]
+	var traitCards = [""]
+	var hiddenCard = "";
+	var charCard = -1
+	var traitCard = -1
+	var canConfirm = false
+	var drawCharCard = ""
+	var drawTraitCard = ""
+	var timerTime = 0
+	var timer = setInterval (timerTick, 9999999999)
+  
+	function getCards() {
+		$.get("https://gist.githubusercontent.com/GamrCorps/4eb1f983cdde6e08ee0df667a0265d5e/raw/1ab2c4a9a2d1bb520b6c29b0858a29ae88e11216/superfightcards.txt").done(function(data){rawCardData = data;charCards = rawCardData.split("\n=====\n")[0].split("\n");traitCards = rawCardData.split("\n=====\n")[1].split("\n");getNewCards()})
+	}
+  
+	function getNewCards() {
+		$("#confirmButton").addClass("disabled")
+		canConfirm = false
+		$("#traitButtonRandom")[0].innerHTML = "N/A: Confirm Fighter to Reveal"
+		$("#traitButtonRandom").addClass("disabled")
+		
+		shuffle(charCards)
+		shuffle(traitCards)
+		$("#characterButton1")[0].innerHTML = charCards[0]
+		$("#characterButton2")[0].innerHTML = charCards[1]
+		$("#characterButton3")[0].innerHTML = charCards[2]
+		$("#traitButton1")[0].innerHTML = traitCards[0]
+		$("#traitButton2")[0].innerHTML = traitCards[1]
+		$("#traitButton3")[0].innerHTML = traitCards[2]
+		hiddenCard = traitCards[3]
+		charCard = -1
+		traitCard = -1
+		drawCharCard = charCards[3]
+		drawTraitCard = traitCards[4]
+		
+		$("#traitButton1").removeClass("disabled")
+		$("#traitButton2").removeClass("disabled")
+		$("#traitButton3").removeClass("disabled")
+		$("#characterButton1").removeClass("disabled")
+		$("#characterButton2").removeClass("disabled")
+		$("#characterButton3").removeClass("disabled")
+		
+		$("#traitButton1").css('white-space', 'normal')
+		$("#traitButton2").css('white-space', 'normal')
+		$("#traitButton3").css('white-space', 'normal')
+		$("#traitButtonRandom").css('white-space', 'normal')
+		$("#characterButton1").css('white-space', 'normal')
+		$("#characterButton2").css('white-space', 'normal')
+		$("#characterButton3").css('white-space', 'normal')
+		
+		$("#characterButton1").css('font-weight', 'normal').siblings().css('font-weight', 'normal');
+		$("#traitButton1").css('font-weight', 'normal').siblings().css('font-weight', 'normal');
+		
+		$('#characterButtonDraw')[0].innerHTML = "Draw Character Card"
+		$('#traitButtonDraw')[0].innerHTML = "Draw Attribute Card"
+	}
+	
+	function chooseCharacterCard(card) {
+		switch (card) {
+			case 1:
+				$("#characterButton1").addClass("disabled")
+				$("#characterButton2").removeClass("disabled")
+				$("#characterButton3").removeClass("disabled")
+				$("#characterButton1").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				charCard = 0
+				break
+			case 2:
+				$("#characterButton2").addClass("disabled")
+				$("#characterButton1").removeClass("disabled")
+				$("#characterButton3").removeClass("disabled")
+				$("#characterButton2").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				charCard = 1
+				break
+			case 3:
+				$("#characterButton3").addClass("disabled")
+				$("#characterButton1").removeClass("disabled")
+				$("#characterButton2").removeClass("disabled")
+				$("#characterButton3").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				charCard = 2
+				break
+		}
+		if (charCard != -1 && traitCard != -1) {
+			$("#confirmButton").removeClass("disabled")
+			canConfirm = true
+		}
+	}
+	
+	function chooseTraitCard(card) {
+		switch (card) {
+			case 1:
+				$("#traitButton1").addClass("disabled")
+				$("#traitButton2").removeClass("disabled")
+				$("#traitButton3").removeClass("disabled")
+				$("#traitButton1").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				traitCard = 0
+				break
+			case 2:
+				$("#traitButton2").addClass("disabled")
+				$("#traitButton1").removeClass("disabled")
+				$("#traitButton3").removeClass("disabled")
+				$("#traitButton2").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				traitCard = 1
+				break
+			case 3:
+				$("#traitButton3").addClass("disabled")
+				$("#traitButton1").removeClass("disabled")
+				$("#traitButton2").removeClass("disabled")
+				$("#traitButton3").css('font-weight', 'bold').siblings().css('font-weight', 'normal');
+				traitCard = 2
+				break
+		}
+		if (charCard != -1 && traitCard != -1) {
+			$("#confirmButton").removeClass("disabled")
+			canConfirm = true
+		}
+	}
+	
+	function confirmFighter () {
+		if (!canConfirm) {
+			return
+		}
+		$("#traitButton1").removeClass("disabled")
+		$("#traitButton2").removeClass("disabled")
+		$("#traitButton3").removeClass("disabled")
+		$("#characterButton1").removeClass("disabled")
+		$("#characterButton2").removeClass("disabled")
+		$("#characterButton3").removeClass("disabled")
+		
+		$("#traitButton1").addClass("disabled")
+		$("#traitButton2").addClass("disabled")
+		$("#traitButton3").addClass("disabled")
+		$("#characterButton1").addClass("disabled")
+		$("#characterButton2").addClass("disabled")
+		$("#characterButton3").addClass("disabled")
+		
+		switch (charCard) {
+			case 0:
+				$("#characterButton2")[0].innerHTML = ""
+				$("#characterButton3")[0].innerHTML = ""
+				break
+			case 1:
+				$("#characterButton1")[0].innerHTML = ""
+				$("#characterButton3")[0].innerHTML = ""
+				break
+			case 2:
+				$("#characterButton1")[0].innerHTML = ""
+				$("#characterButton2")[0].innerHTML = ""
+				break
+		}
+		
+		switch (traitCard) {
+			case 0:
+				$("#traitButton2")[0].innerHTML = ""
+				$("#traitButton3")[0].innerHTML = ""
+				break
+			case 1:
+				$("#traitButton1")[0].innerHTML = ""
+				$("#traitButton3")[0].innerHTML = ""
+				break
+			case 2:
+				$("#traitButton1")[0].innerHTML = ""
+				$("#traitButton2")[0].innerHTML = ""
+				break
+		}
+		
+		$("#traitButtonRandom")[0].innerHTML = traitCards[3]
+	}
+	
+	function shuffle(array) {
+		var currentIndex = array.length, temporaryValue, randomIndex;
+
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex) {
+
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array;
+	}
+  </script>
+</head>
+
+
+<body onload="getCards()">
+<div class="container">
+  <div class="jumbotron">
+    <h1>SUPERFIGHT ONLINE</h1>
+    <p>A web port of the SUPERFIGHT card game by Matthew M.</p> 
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>White Card (Character)</h3>
+      <button class="btn btn-default btn-block btn-lg" id="characterButton1" onclick="chooseCharacterCard(1)">N/A</button>
+	  <button class="btn btn-default btn-block btn-lg" id="characterButton2" onclick="chooseCharacterCard(2)">N/A</button>
+	  <button class="btn btn-default btn-block btn-lg" id="characterButton3" onclick="chooseCharacterCard(3)">N/A</button>
+    </div>
+    <div class="col-sm-4">
+      <h3>Blue Card (Attribute)</h3>
+      <button class="btn btn-primary btn-block btn-lg" id="traitButton1" onclick="chooseTraitCard(1)">N/A</button>
+	  <button class="btn btn-primary btn-block btn-lg" id="traitButton2" onclick="chooseTraitCard(2)">N/A</button>
+	  <button class="btn btn-primary btn-block btn-lg" id="traitButton3" onclick="chooseTraitCard(3)">N/A</button>
+    </div>
+    <div class="col-sm-4">
+      <h3>Random Blue Card (Attribute)</h3>        
+      <button class="btn btn-primary btn-block btn-lg" id="traitButtonRandom">N/A</button>
+    </div>
+  </div>
+  <hr>
+  <button class="btn btn-success btn-block btn-lg" id="confirmButton" onclick="confirmFighter()">Confirm Fighter</button>
+  <button class="btn btn-danger btn-block btn-lg" id="resetButton" onclick="getNewCards()">Reset</button>
+  <hr>
+  <button class="btn btn-default btn-block btn-lg" id="characterButtonDraw" onclick="$('#characterButtonDraw')[0].innerHTML = drawCharCard">Draw Character Card</button>
+  <button class="btn btn-primary btn-block btn-lg" id="traitButtonDraw" onclick="$('#traitButtonDraw')[0].innerHTML = drawTraitCard">Draw Attribute Card</button>
+</div>
+</body>
+</html>
